@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+    <title>Sesion Estudiante</title>
+
+
+</head>
+
+<body>
+
+    <nav class="navbar" style="background-color: #000000;">
+        <div class="container-fluid" style="background-color: #000000;">
+            <!-- Logo izquierdo -->
+            <img src="https://i.ibb.co/XStTdP4/via-Dise-o-Logo.png" alt="Logo Izquierdo" class="me-auto"
+                style="width: 40px;">
+            <!-- Enlaces del menú -->
+            <a class="navbar-brand" href="#" style="color: #ffffff;" id="tituloNavbar">App</a>
+            <!-- Color del texto: blanco (#ffffff) -->
+            <!-- Logo derecho con icono -->
+            <a href="/" class="ms-auto">
+                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="#ffffff" class="bi bi-house"
+                    viewBox="0 0 16 16">
+                    <path
+                        d="M8.707 1.5a1 1 0 0 0-1.414 0L.646 8.146a.5.5 0 0 0 .708.708L2 8.207V13.5A1.5 1.5 0 0 0 3.5 15h9a1.5 1.5 0 0 0 1.5-1.5V8.207l.646.647a.5.5 0 0 0 .708-.708L13 5.793V2.5a.5.5 0 0 0-.5-.5h-1a.5.5 0 0 0-.5.5v1.293zM13 7.207V13.5a.5.5 0 0 1-.5.5h-9a.5.5 0 0 1-.5-.5V7.207l5-5z" />
+                </svg>
+            </a>
+        </div>
+    </nav>
+
+
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-2 ps-0"> <!-- Añadida la clase ps-0 para eliminar el espacio del borde izquierdo -->
+                <!-- Menú -->
+                <div class="d-flex flex-column flex-shrink-0 p-3"
+                    style="height: 100vh; overflow-auto; background-color: #9E3232;">
+                    <!-- Cambiado bg-body-tertiary a background-color: #9E3232 -->
+                    <div class="info d-flex justify-content-center align-items-center flex-column">
+                        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRQgrnXQr8_tLaOGSywuwUpFcVEzD1M_jIeDdWc0GukWg&s"
+                            alt="" width="100" height="100" class="rounded-circle me-2">
+                        <p class="text-white">
+                            <%= nombre %>
+                                <%= apellido %>
+                        </p> <!-- Cambiado el color del texto a blanco -->
+                        <p class="text-white">
+                            <%= rol %>
+                        </p> <!-- Cambiado el color del texto a blanco -->
+                        <p class="text-white">
+                            <%= matricula %>
+                        </p> <!-- Cambiado el color del texto a blanco -->
+                    </div>
+                    <hr>
+
+                    <a href="#" class="nav-link link-body-emphasis text-white" onclick="historialPago()">
+                        <!-- Cambiado el color del texto a blanco -->
+                        <svg class="bi pe-none me-2" width="16" height="16">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                class="bi bi-arrow-counterclockwise" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd"
+                                    d="M8 3a5 5 0 1 1-4.546 2.914a.5.5 0 0 0-.908-.417a6 6 0 1 0 0-4a.5.5 0 0 0 .908-.417A5 5 0 0 1 8 3zm0-1a6 6 0 1 1-4.546 2.914a.5.5 0 0 0-.908-.417A7 7 0 1 0 8 2z" />
+                                <path
+                                    d="M8 4.466V.534a.25.25 0 0 0-.41-.192L5.23 2.308a.25.25 0 0 0 0 .384l2.36 1.966A.25.25 0 0 0 8 4.466" />
+                            </svg>
+                        </svg>
+                        HISTORIAL DE PAGO
+                    </a>
+                    <!-- Opciones específicas para el rol de Maestría o Universitario -->
+                    <a href="#" class="nav-link link-body-emphasis text-white" onclick="estadoCuenta()">
+                        <!-- Cambiado el color del texto a blanco -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                            class="bi bi-person-check-fill" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd"
+                                d="M15.854 5.146a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L12.5 7.793l2.646-2.647a.5.5 0 0 1 .708 0" />
+                            <path d="M1 14s-1 0-1-1 1-4 6-4 6 3 6 4-1 1-1 1zm5-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6" />
+                        </svg>
+                        ESTADO DE CUENTA
+                    </a>
+
+
+
+                    <!-- Enlace para cerrar sesión -->
+                    <a href="/" class="nav-link link-body-emphasis text-white" style="position: fixed; bottom: 3%;">
+                        <!-- Cambiado el color del texto a blanco -->
+                        <svg class="bi pe-none me-2" width="16" height="16">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                class="bi bi-box-arrow-left" viewBox="0 0 16 16">
+                                <path fill-rule="evenodd"
+                                    d="M6 12.5a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v2a.5.5 0 0 1-1 0v-2A1.5 1.5 0 0 1 6.5 2h8A1.5 1.5 0 0 1 16 3.5v9a1.5 1.5 0 0 1-1.5 1.5h-8A1.5 1.5 0 0 1 5 12.5v-2a.5.5 0 0 1 1 0z" />
+                                <path fill-rule="evenodd"
+                                    d="M.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L1.707 7.5H10.5a.5.5 0 0 1 0 1H1.707l2.147 2.146a.5.5 0 0 1-.708.708z" />
+                            </svg>
+                        </svg>
+                        CERRAR SESIÓN
+                    </a>
+
+                </div>
+            </div>
+
+            <div class="col-10">
+                <!-- aqui pintaremos un input para la busqueda del usuario -->
+                <div id="buscarAlumno"></div>
+
+                <!-- Tabla de Pagos -->
+                <table id="tablaPagos" class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">ID Pago</th>
+                            <th scope="col">Monto</th>
+                            <th scope="col">Fecha Emisión</th>
+                            <th scope="col">Fecha Límite</th>
+                            <th scope="col">Concepto</th>
+                            <th scope="col">Seleccionar</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cuerpoTabla">
+                        <!-- Aquí se cargarán los datos de los pagos -->
+                    </tbody>
+                </table>
+                <div id="totalPagos"></div>
+
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Script para cargar los datos de los pagos del usuario -->
+    <script>
+
+        MontoTotalaPagar = 0
+        idsCheckboxSelectedList = []
+        modalidadPago = '------------'
+
+
+        // Obtener el ID de usuario del elemento en la sesión actual
+        const idUsuario = '<%= idUsuario %>';
+
+
+
+        function historialPago() {
+
+            document.getElementById('tituloNavbar').innerText = 'Historial de Pago';
+
+            const tablaPagos = document.getElementById("tablaPagos");
+            const totalPagos = document.getElementById("totalPagos");
+
+            totalPagos.innerHTML = "";
+
+            tablaPagos.innerHTML = `
+                <table id="tablaPagos" class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">ID Pago</th>
+                            <th scope="col">Monto</th>
+                            <th scope="col">Fecha Emisión</th>
+                            <th scope="col">Fecha Límite</th>
+                            <th scope="col">Fecha Pago</th>
+                            <th scope="col">Estado</th>
+                            <th scope="col">Modalidad</th>
+                            <th scope="col">Concepto</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cuerpoTabla">
+                        <!-- Aquí se cargarán los datos de los pagos -->
+                    </tbody>`
+
+
+
+            // Hacer una solicitud AJAX para obtener los datos de los pagos del usuario
+            fetch(`/pagos/${idUsuario}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Obtener el cuerpo de la tabla
+                    const cuerpoTabla = document.getElementById("cuerpoTabla");
+
+                    // Limpiar el contenido actual de la tabla
+                    cuerpoTabla.innerHTML = "";
+                    const tdElement = document.createElement('td');
+
+                    // Iterar sobre los datos de los pagos y agregar filas a la tabla
+                    data.forEach(pago => {
+                        //para mintar verde y rojo el estado de pago
+                        tdElement.textContent = pago.estado;
+                        if (pago.estado === 'Aprobado') {
+                            tdElement.classList.add('estado-aprobado');
+                        } else {
+                            tdElement.classList.add('estado-pendiente');
+                        }
+                        const fila = `
+              <tr>
+                <td>${pago.idPago}</td>
+                <td>${pago.monto}</td>
+                <td>${pago.fechaEmision.substring(0, 10)}</td>
+                <td>${pago.fechaLimite.substring(0, 10)}</td>
+                <td>${pago.fechaPago ? pago.fechaPago.substring(0, 10) : '------------'}</td>
+                <td style="color: ${pago.estado === 'Aprobado' ? 'green' : 'red'}">${pago.estado}</td>
+
+                <td>${pago.modalidad ? pago.modalidad.substring(0, 10) : '------------'}</td>
+                <td>${pago.concepto}</td>
+              </tr>
+            `;
+                        cuerpoTabla.innerHTML += fila;
+                    });
+                })
+                .catch(error => console.error("Error al obtener los datos de los pagos:", error));
+
+        }
+
+        function estadoCuenta() {
+            document.getElementById('tituloNavbar').innerText = 'Estado de Cuenta';
+            MontoTotalaPagar = 0
+            const tablaPagos = document.getElementById("tablaPagos");
+            const totalPagos = document.getElementById("totalPagos");
+            tablaPagos.innerHTML = `
+                <thead>
+                        <tr>
+                            <th scope="col">ID Pago</th>
+                            <th scope="col">Monto</th>
+                            <th scope="col">Fecha Emisión</th>
+                            <th scope="col">Fecha Límite</th>
+                            <th scope="col">Concepto</th>
+                            <th scope="col">Seleccionar</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cuerpoTabla">
+                        <!-- Aquí se cargarán los datos de los pagos -->
+                    </tbody>
+                  `;
+            totalPagos.innerHTML = `            
+                  <!-- Total -->
+                  <div class="d-flex justify-content-center mt-10 flex-column align-items-center">
+                    <!-- Centrado horizontalmente y verticalmente -->
+                    <h1>Total: $${MontoTotalaPagar}</h1>
+                    <div class="modoPagoCheck">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="WebPay" onclick="handleCheckboxClickOne(this, 'Transferencia')">
+                        <label class="form-check-label" for="WebPay"> WebPay </label>
+                    </div>
+                                                
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="Transferencia" onclick="handleCheckboxClickOne(this, 'WebPay')">
+                        <label class="form-check-label" for="Transferencia"> Transferencia </label>
+                    </div>
+                </div>
+       
+                    <button type="button" class="btn btn-success mt-3">Realizar Pago</button>
+                </div>
+               
+`
+                ;
+
+            // Hacer una solicitud AJAX para obtener los datos de los pagos del usuario
+            fetch(`/pagos/${idUsuario}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Obtener el cuerpo de la tabla
+                    const cuerpoTabla = document.getElementById("cuerpoTabla");
+
+                    // Limpiar el contenido actual de la tabla
+                    cuerpoTabla.innerHTML = "";
+
+                    // Iterar sobre los datos de los pagos y agregar filas a la tabla
+                    data.forEach(pago => {
+                        // Solo agregar filas para los pagos con estado "Pendiente"
+                        if (pago.estado === "Pendiente") {
+                            const fila = `
+                                <tr>
+                                    <td>${pago.idPago}</td>
+                                    <td>${pago.monto}</td>
+                                    <td>${pago.fechaEmision.substring(0, 10)}</td>
+                                    <td>${pago.fechaLimite.substring(0, 10)}</td>
+                                    <td>${pago.concepto}</td>
+                                    <td> <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" value="${pago.monto}" id="${pago.idPago}" onclick="handleCheckboxClick(this)">
+                                        <label class="form-check-label" for="flexCheckDefault">        
+                                        </label>
+                                        </div>
+                                    </td>
+                                        
+                                </tr>
+                              
+            
+
+                            `;
+                            cuerpoTabla.innerHTML += fila;
+                        }
+                    });
+                })
+                .catch(error => console.error("Error al obtener los datos de los pagos:", error));
+        }
+        // Se realizan distintas acciones cuando el checkbox esta marcado
+        function handleCheckboxClick(checkbox) {
+
+            if (checkbox.checked) {
+                // El checkbox está marcado
+                idsCheckboxSelectedList.push(parseInt(checkbox.id))
+                console.log("El checkbox está marcado", checkbox.id);
+                console.log("Lista ids selecter", idsCheckboxSelectedList);
+                // Realiza las acciones que desees cuando el checkbox está marcado
+                MontoTotalaPagar += parseFloat(checkbox.value)
+                totalPagos.innerHTML = `            
+                  <!-- Total -->
+                  <div class="d-flex justify-content-center mt-10 flex-column align-items-center">
+                    <!-- Centrado horizontalmente y verticalmente -->
+                    <h1>Total: $${MontoTotalaPagar}</h1>
+                    <div class="modoPagoCheck">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="WebPay" onclick="handleCheckboxClickOne(this, 'Transferencia')">
+                        <label class="form-check-label" for="WebPay"> WebPay </label>
+                    </div>
+                                                
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="Transferencia" onclick="handleCheckboxClickOne(this, 'WebPay')">
+                        <label class="form-check-label" for="Transferencia"> Transferencia </label>
+                    </div>
+                </div>
+       
+                <button type="button" class="btn btn-success mt-3" onclick="pagar()">Realizar Pago</button>
+                </div>  
+               
+`;
+
+            } else {
+                // El checkbox está desmarcado
+                let indiceIdAEliminar = idsCheckboxSelectedList.indexOf(checkbox.id);
+                idsCheckboxSelectedList.splice(indiceIdAEliminar, 1);
+
+                console.log("El checkbox está desmarcado", checkbox.id);
+                console.log("Lista ids selecter", idsCheckboxSelectedList);
+
+                // Realiza las acciones que desees cuando el checkbox está desmarcado
+                MontoTotalaPagar -= parseFloat(checkbox.value)
+                totalPagos.innerHTML = `            
+                  <!-- Total -->
+                  <div class="d-flex justify-content-center mt-10 flex-column align-items-center">
+                    <!-- Centrado horizontalmente y verticalmente -->
+                    <h1>Total: $${MontoTotalaPagar}</h1>
+                    <div class="modoPagoCheck">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="WebPay" onclick="handleCheckboxClickOne(this, 'Transferencia')">
+                        <label class="form-check-label" for="WebPay" => WebPay </label>
+                    </div>
+                                                
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="Transferencia" onclick="handleCheckboxClickOne(this, 'WebPay')">
+                        <label class="form-check-label" for="Transferencia" > Transferencia </label>
+                    </div>
+                </div>
+       
+                  
+                    <button type="button" class="btn btn-success mt-3" onclick="pagar()">Realizar Pago</button>
+                </div>
+                
+`;
+            }
+        }
+
+        function handleCheckboxClickOne(checkbox, idOtroCheckbox) {
+            // Desmarca el otro checkbox si está marcado
+            if (checkbox.checked) {
+                document.getElementById(idOtroCheckbox).checked = false;
+                modalidadPago = checkbox.id
+
+            }
+
+        }
+
+        function pagar() {
+            console.log('muestra: ', idsCheckboxSelectedList);
+
+            // Crear un objeto con las dos variables
+            const data = {
+                idsCheckboxSelectedList: idsCheckboxSelectedList,
+                modalidadPago: modalidadPago
+            };
+
+
+            fetch('/pagar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => {
+
+
+                    // Verificar la respuesta del servidor
+                    if (response.ok & data.idsCheckboxSelectedList != []) {
+                        console.log('Pago realizado exitosamente');
+                        alert('¡Pago realizado exitosamente!');
+                        estadoCuenta()
+                        idsCheckboxSelectedList = [] // vaciamos la lista
+                        // Aquí puedes hacer algo después de que se haya realizado el pago correctamente
+                    } else {
+                        console.error('Error al realizar el pago');
+                        alert('¡Seleccione cuentas a pagar!');
+                        // Aquí puedes manejar el error en caso de que la solicitud falle
+                    }
+                })
+                .catch(error => {
+                    console.error('Error de red:', error);
+                    // Aquí puedes manejar errores de red u otros errores de JavaScript
+                });
+        }
+
+
+
+        historialPago()
+
+    </script>
+</body>
+
+</html>
