@@ -864,3 +864,4 @@ function registros() {
     checkboxClickedMonto = monto;
     checkboxClickedConcepto = concepto;
   }
+  
