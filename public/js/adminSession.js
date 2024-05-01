@@ -62,3 +62,234 @@ function historialPago() {
   document.getElementById("inputNombreBuscar").value = nombre;
   buscarAlumno();
 }
+
+function actionHistoiralPDF(button) {
+  var ficha = button.querySelector("#descargarHistorial");
+  ficha.classList.toggle("active"); // Cambia la clase para cambiar el color
+  setTimeout(() => {
+    ficha.classList.remove("active"); // Remueve la clase después de un breve tiempo
+  }, 400); // 500 ms después de hacer clic
+
+  console.log(`Generando PDf `);
+  // Crear una instancia de jsPDF
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+
+  var image = new Image();
+  image.onload = function () {
+    var base64 = getBase64Image(image);
+    console.log(base64); // Imprime la cadena base64 de la imagen en la consola
+  };
+  image.src = "https://i.ibb.co/YBNPpjF/via-Dise-o-Logo-Grande.png"; // Asegúrate de tener acceso a la imag
+  // Posición de la imagen (x, y, ancho, alto)
+  doc.addImage(image, "PNG", 150, 5, 30, 30); // Ajusta las coordenadas como sea necesario
+
+  doc.setFontSize(10); // Establece el tamaño de fuente a 8 puntos
+  doc.setFont("helvetica", "bold");
+  
+  doc.text(`Nombre Alumno: ${alumno.Nombre} ${alumno.Apellido_paterno} ${alumno.Apellido_materno}`, 10, 10);
+  doc.text(` N° Matricula: ${alumno.Matricula}`, 10, 20);
+
+  
+
+  doc.text("ID Pago", 10, 50);
+  doc.text("Monto", 30, 50);
+  doc.text("Fecha Emisión", 50, 50);
+  doc.text("Fecha Límite", 80, 50);
+  doc.text("Fecha Pago", 110, 50);
+  doc.text("Estado", 140, 50);
+  doc.text("Modalidad", 160, 50);
+  doc.text("Concepto", 180, 50);
+
+  //Dibuja una línea horizontal debajo de los títulos de las columnas
+  doc.line(10, 55, 200, 55); // Ajusta los valores de `x2` según el ancho de tu página
+
+  doc.setFont("helvetica", "normal"); 
+  let y = 60; // Posición inicial de los datos en Y
+
+  historialPagoList.forEach(function (pago, index) {
+    doc.text(`${pago.idPago}`, 10, y);
+    doc.text(`${pago.monto}`, 30, y);
+    doc.text(`${pago.fechaEmision}`, 50, y);
+    doc.text(`${pago.fechaLimite}`, 80, y);
+    doc.text(`${pago.fechaPago}`, 110, y);
+    doc.text(`${pago.estado}`, 140, y);
+    doc.text(`${pago.modalidad}`, 160, y);
+    doc.text(`${pago.concepto}`, 180, y);
+
+    // Dibuja una línea horizontal debajo de cada fila de datos
+    doc.line(10, y + 3, 200, y + 3); // Ajusta los valores de `x2` según el ancho de tu página
+
+    y += 10; // Incrementa la posición Y para la próxima línea de datos
+  });
+
+  // Guardar el documento
+  doc.save("historial-pagos.pdf");
+}
+
+function buscarAlumno() {
+  historialPagoList = [];
+
+  nombre = document.querySelector("#buscarAlumno input").value;
+  console.log(nombre);
+  // Hacer una solicitud AJAX para buscar el alumno por nombre
+  // Hacer una solicitud AJAX para obtener los datos de los pagos del usuario
+  fetch(`/buscarAlumno?nombre=${nombre}`)
+    .then((response) => response.json())
+    .then((data) => {
+      // Obtener el cuerpo de la tabla
+      const cuerpoTabla = document.getElementById("cuerpoTabla");
+
+      // Limpiar el contenido actual de la tabla
+      cuerpoTabla.innerHTML = "";
+
+      alumno = {
+        IdUsuario: data.alumno.IdUsuario,
+        Nombre: data.alumno.Nombre,
+        Apellido_paterno: data.alumno.Apellido_paterno,
+        Apellido_materno: data.alumno.Apellido_materno,
+        Correo: data.alumno.Correo,
+        Matricula: data.alumno.Matricula,
+        Telefono: data.alumno.Telefono,
+        Referencia: data.alumno.Referencia,
+      };
+
+   
+
+   
+
+      // Iterar sobre los datos de los pagos y agregar filas a la tabla
+      data.pagos.forEach((pago) => {
+        pagoX = {
+          idPago: pago.idPago,
+          monto: pago.monto,
+          fechaEmision: pago.fechaEmision.substring(0, 10),
+          fechaLimite: pago.fechaLimite.substring(0, 10),
+          fechaPago: pago.fechaPago
+            ? pago.fechaPago.substring(0, 10)
+            : "------------",
+          estado: pago.estado,
+          modalidad: pago.modalidad
+            ? pago.modalidad.substring(0, 10)
+            : "------------",
+          concepto: pago.concepto,
+          estado: pago.estado,
+        };
+
+        historialPagoList.push(pagoX);
+        usuarioActualId = pago.idUsuario;
+
+        const fila = `
+<tr>
+    <td>${pago.idPago}</td>
+    <td>${pago.monto}</td>
+    <td>${pago.fechaEmision.substring(0, 10)}</td>
+    <td>${pago.fechaLimite.substring(0, 10)}</td>
+    <td>${
+      pago.fechaPago ? pago.fechaPago.substring(0, 10) : "------------"
+    }</td>
+    <td style="color: ${pago.estado === "Aprobado" ? "green" : "red"}">${
+          pago.estado
+        }</td>
+    <td>${
+      pago.modalidad ? pago.modalidad.substring(0, 10) : "------------"
+    }</td>
+    <td>${pago.concepto}</td>
+    <td>
+        ${
+          pago.estado !== "Aprobado"
+            ? `
+            <!-- Botón para abrir el modal -->
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal-${
+              pago.idPago
+            }">
+                Modificar
+            </button>
+
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal-${
+              pago.idPago
+            }" tabindex="-1" aria-labelledby="exampleModalLabel-${
+                pago.idPago
+              }" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Editar Pago</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <form>
+                <div class="mb-3">
+                <label for="monto" class="form-label">Monto</label>
+                <input type="text" class="form-control" id="montoUpdate-${
+                  pago.idPago
+                }" value="${pago.monto}">
+                </div>
+                <div class="mb-3">
+                <label for="fechaEmision" class="form-label">Fecha Emisión</label>
+                <input type="date" class="form-control" id="fechaEmisionUpdate-${
+                  pago.idPago
+                }" value="${
+                pago.fechaEmision
+                  ? pago.fechaEmision.substring(0, 10)
+                  : "------------"
+              }">
+                </div>
+                <div class="mb-3">
+                <label for="fechaLimite" class="form-label">Fecha Límite</label>
+                <input type="date" class="form-control" id="fechaLimiteUpdate-${
+                  pago.idPago
+                }" value="${
+                pago.fechaLimite ? pago.fechaLimite.substring(0, 10) : ""
+              }">
+                </div>
+                <div class="mb-3">
+                <label for="fechaPago" class="form-label">Fecha Pago</label>
+                <input type="date" class="form-control" id="fechaPagoUpdate-${
+                  pago.idPago
+                }" value="${
+                pago.fechaPago ? pago.fechaPago.substring(0, 10) : ""
+              }">
+                </div>
+                <div class="mb-3">
+                <label for="estado" class="form-label">Estado</label>
+                <input type="text" class="form-control" id="estadoUpdate-${
+                  pago.idPago
+                }" value="${pago.estado}">
+                </div>
+                <div class="mb-3">
+                <label for="modalidad" class="form-label">Modalidad</label>
+                <input type="text" class="form-control" id="modalidadUpdate-${
+                  pago.idPago
+                }" value="${pago.modalidad}">
+                </div>
+                <div class="mb-3">
+                <label for="concepto" class="form-label">Concepto</label>
+                <input type="text" class="form-control" id="conceptoUpdate-${
+                  pago.idPago
+                }" value="${pago.concepto}">
+                </div>
+            </form>
+
+                        </div>
+                        <div class="modal-footer" id='footer-${pago.idPago}'>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            <button type="button" class="btn btn-primary" onclick="guardarCambios('${
+                              pago.idPago
+                            }','${pago.idUsuario}')">Guardar cambios</button>
+                        </div>
+                    </div>
+                </div>
+            </div>`
+            : ""
+        }
+    </td>
+</tr>
+`;
+        cuerpoTabla.innerHTML += fila;
+      });
+    })
+    .catch((error) => console.error("Error al buscar alumno:", error));
+}
