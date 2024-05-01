@@ -1,0 +1,48 @@
+.chart-container {
+    position: relative;
+    /* Importante para responsividad */
+    height: 350px;
+    /* Altura fija o como sea necesario */
+    width: 100%;
+    /* Ajusta al 100% del contenedor padre */
+}
+
+
+.flex-container {
+    display: flex;
+}
+
+.flex-large {
+    flex: 60%;
+}
+
+.flex-small {
+    flex: 40%;
+    margin-left: 10px; /* Espaciado entre los dos elementos */
+}
+
+#check {
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Este es opcional, centra verticalmente en caso de que el div tenga altura significativa */
+}
+
+.pdf {
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Este es opcional, centra verticalmente en caso de que el div tenga altura significativa */
+}
+
+button {
+    border: none; /* Sin borde */
+    background-color: transparent; /* Fondo transparente */
+    cursor: pointer; /* Cursor en forma de mano para indicar que es clicable */
+    padding: 10px; /* Espacio alrededor del contenido del botón */
+}
+.pdf svg {
+    fill: gray; /* Color inicial */
+    transition: fill 0.1s; /* Transición suave del color */
+}
+.pdf.active svg {
+    fill: #9E3232; /* Color al hacer clic */
+}
