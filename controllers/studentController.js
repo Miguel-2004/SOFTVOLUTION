@@ -136,3 +136,65 @@ const cicloescolarComboBox = (req, res) => {
     }
   };
   
+  const setearCombobox = (req, res) => {
+    try {
+      const idUsuario = req.params.idUsuario; // Asumimos que el idUsuario viene como parámetro de la ruta
+  
+      // Consulta SQL usando marcadores de posición para prevenir inyecciones SQL
+      const sqlQuery = `
+        SELECT idCiclo FROM relacionusuariociclo
+        WHERE idUsuario = ${idUsuario}
+      `;
+  
+      // Ejecutar la consulta SQL de forma segura
+      db.query(sqlQuery, (error, results) => {
+        if (error) {
+          console.error("Error al ejecutar la consulta SQL:", error);
+          return res
+            .status(500)
+            .json({ error: "Error al recuperar los ciclos escolares" });
+        }
+        console.log("Ciclos escolares recuperados correctamente:", results);
+        res.status(200).json(results);
+      });
+    } catch (error) {
+      console.error("Error en el endpoint /usuarioCiclo:", error);
+      res.status(500).json({ error: "Error interno del servidor" });
+    }
+  };
+  
+  const buscarPeriodoConIdCiclo = (req, res) => {
+    try {
+      const idCiclo = req.params.idCiclo;
+  
+      // Consulta SQL usando marcadores de posición para prevenir inyecciones SQL
+      const sqlQuery = `
+        SELECT periodo FROM cicloescolar
+        WHERE idCiclo = ?
+        ORDER BY periodo DESC
+      `;
+  
+      // Ejecutar la consulta SQL de forma segura
+      db.query(sqlQuery, [idCiclo], (error, results) => {
+        if (error) {
+          console.error("Error al ejecutar la consulta SQL:", error);
+          return res.status(500).json({ error: "Error al recuperar el periodo" });
+        }
+        console.log("Periodo recuperado correctamente:", results);
+        res.status(200).json(results[0]); // Enviar el primer resultado
+      });
+    } catch (error) {
+      console.error("Error en el endpoint /buscarPeriodoConIdCiclo:", error);
+      res.status(500).json({ error: "Error interno del servidor" });
+    }
+  };
+  
+  module.exports = {
+    searchStudents,
+    RegistrarReferenciaPersonalizada,
+    cicloescolarComboBox,
+    registrarCicloEscolarFunction,
+    setearCombobox,
+    buscarPeriodoConIdCiclo
+  };
+  
