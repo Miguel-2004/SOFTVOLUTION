@@ -1210,3 +1210,188 @@ function filtrarDataModalidaPago(data) {
 
   return distribucionModalidadPago;
 }
+
+function filtrarDataIngresosMensuales(data) {
+  let ingresosMensuales = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
+  data.forEach(function (pago) {
+    let mesPago = parseInt(pago.fechaPago.slice(5, 7)) - 1;
+    let monto = parseFloat(pago.monto);
+
+    ingresosMensuales[mesPago] = ingresosMensuales[mesPago] + monto;
+  });
+
+  return ingresosMensuales;
+}
+
+function downloadPDF() {
+  // Utiliza html2canvas para convertir el contenido de la página en un canvas
+  html2canvas(document.body).then((canvas) => {
+    // Crea una nueva instancia de jsPDF
+    const pdf = new jsPDF("p", "mm", "a4");
+
+    // Calcula el ancho y el alto para ajustar la imagen al PDF
+    const contentWidth = canvas.width;
+    const contentHeight = canvas.height;
+    const pdfWidth = pdf.internal.pageSize.getWidth();
+    const pdfHeight = (pdfWidth * contentHeight) / contentWidth;
+
+    // Agrega la imagen del canvas al PDF
+    const imgData = canvas.toDataURL("image/png");
+    pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+
+    // Guarda el PDF
+    pdf.save("reporte.pdf");
+  });
+}
+
+function reportes() {
+  const contenedor = document.getElementById("contenedor");
+  // Esto limpia completamente el contenedor antes de agregar nuevo contenido.
+  contenedor.innerHTML = "";
+
+  document.getElementById("tituloNavbar").innerText = "Reportes";
+
+  // Asegúrate de que solo añades contenido nuevo una vez que el contenedor esté vacío.
+  contenedor.innerHTML = `
+  
+  <!-- Contenedor para los elementos en fila con Flexbox y alineación al final -->
+  <div class="row mb-3 align-items-end" style="padding-top: 1%">
+    
+      <!-- Primer elemento de fecha Desde -->
+      <div class="col">
+         <label for="fechaDesde">Desde</label>
+         <input type="date" class="form-control" id="fechaDesde" placeholder="Seleccione la fecha">
+      </div>
+    
+      <!-- Segundo elemento de fecha Hasta -->
+      <div class="col">
+         <label for="fechaHasta">Hasta</label>
+         <input type="date" class="form-control" id="fechaHasta" placeholder="Seleccione la fecha">
+      </div>
+
+      <div class="col">
+      </div>
+    
+      <!-- Botón Exportar a PDF -->
+      <div class="col">
+     
+      </div>
+      
+      
+  </div>
+
+
+
+<div class="row" >
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">Distribución de Modalidad de Pago</div>
+            <div class="card-body">
+                <div class="chart-container">
+                  <canvas id="modalidadPagoChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">Ingresos Mensuales</div>
+            <div class="card-body">
+                <div class="chart-container">
+                    <canvas id="ingresosMensuales"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+`;
+  const inputDesde = document.getElementById("fechaDesde");
+  const inputHasta = document.getElementById("fechaHasta");
+
+  inputDesde.addEventListener("change", handleDateChange);
+  inputHasta.addEventListener("change", handleDateChange);
+
+  document.getElementById("fechaDesde");
+  document.getElementById("fechaHasta");
+  //Al iniciar Reportes se resfrescan desde y hasta la fecha Hoy
+  reportesFechasFijas("2024-01-01", fechaHoy);
+}
+
+// Variables globales para mantener los gráficos
+let modalidadPagoChart;
+let ingresosMensualesChart;
+
+function refrescarGraficos(dataModalidaPago, dataIngresosMensuales) {
+  // Ahora inicializa el gráfico.
+  const ctx = document.getElementById("modalidadPagoChart").getContext("2d");
+  const ctxx = document.getElementById("ingresosMensuales").getContext("2d");
+
+  if (modalidadPagoChart) {
+    modalidadPagoChart.destroy();
+  }
+
+  modalidadPagoChart = new Chart(ctx, {
+    type: "doughnut",
+    data: {
+      labels: ["Efectivo", "WebPay", "Transferencia"],
+      datasets: [
+        {
+          label: "Modalidad de Pago",
+          data: dataModalidaPago,
+          backgroundColor: ["#9E3232", "#272822", "#EEF0ED"],
+          borderColor: ["#272822"],
+          borderWidth: 1,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+    },
+  });
+
+  if (ingresosMensualesChart) {
+    ingresosMensualesChart.destroy();
+  }
+
+  ingresosMensualesChart = new Chart(ctxx, {
+    type: "bar",
+    data: {
+      labels: [
+        "Enero",
+        "Febrero",
+        "Marzo",
+        "Abril",
+        "Mayo",
+        "Junio",
+        "Julio",
+        "Agosto",
+        "Septiembre",
+        "Octubre",
+        "Noviembre",
+        "Diciembre",
+      ],
+      datasets: [
+        {
+          label: "Ingresos Mensuales",
+          data: dataIngresosMensuales,
+          backgroundColor: ["#9E3232"],
+          borderColor: ["#272822"],
+          borderWidth: 1,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        y: {
+          beginAtZero: true,
+        },
+      },
+    },
+  });
+}
+
+historialPago();
