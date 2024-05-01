@@ -79,3 +79,60 @@ const RegistrarReferenciaPersonalizada = (req, res) => {
     res.status(500).json({ error: "Error interno del servidor" });
   }
 };
+
+const cicloescolarComboBox = (req, res) => {
+    try {
+      // Aquí no necesitas obtener datos del cuerpo de la solicitud, ya que es una consulta simple
+      const sqlQuery = "SELECT * FROM cicloescolar";
+  
+      // Ejecutar la consulta SQL de forma segura
+      db.query(sqlQuery, (error, results) => {
+        if (error) {
+          console.error("Error al ejecutar la consulta SQL:", error);
+          return res
+            .status(500)
+            .json({ error: "Error al obtener los ciclos escolares" });
+        }
+        console.log("Ciclos escolares obtenidos correctamente:", results);
+        return res.status(200).json(results);
+      });
+    } catch (error) {
+      console.error("Error en el endpoint /cicloescolar:", error);
+      res.status(500).json({ error: "Error interno del servidor" });
+    }
+  };
+  
+  const registrarCicloEscolarFunction = (req, res) => {
+    try {
+      const { IdCicloActual, idUsuario } = req.body;
+  
+      // Consulta SQL usando marcadores de posición para valores
+      const sqlQuery = `
+        UPDATE relacionusuariociclo
+        SET
+        idCiclo = '${IdCicloActual}'
+        Where idUsuario = '${idUsuario}'
+        
+      `;
+  
+      // Ejecutar la consulta SQL de forma segura
+      db.query(sqlQuery, (error, results) => {
+        if (error) {
+          console.error("Error al ejecutar la consulta SQL:", error);
+          return res
+            .status(500)
+            .json({ error: "Error al actualizar la Referencia" });
+        }
+        console.log("Ciclo actualizado correctamente:", results);
+        return res
+          .status(200)
+          .json({
+            message: `Ciclo actualizada correctamente para el  id: ${idUsuario}.`,
+          });
+      });
+    } catch (error) {
+      console.error("Error en el endpoint /actualizarPago:", error);
+      res.status(500).json({ error: "Error interno del servidor" });
+    }
+  };
+  
