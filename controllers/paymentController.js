@@ -1,5 +1,5 @@
 const db = require('../config/dbConfig');
-const fechaActual = new Date(); // Consider moving this inside the function if you want the exact current time
+const fechaActual = new Date(); 
 
 const getPaymentsByUser = (req, res) => {
   const { idUsuario } = req.params;
