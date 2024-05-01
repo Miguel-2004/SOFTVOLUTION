@@ -654,3 +654,264 @@ function registros() {
       }
     });
 }
+
+function buscarAlumnoRegistro() {
+  // Obtener el valor del input de búsqueda
+  nombre = document.querySelector("#buscarAlumnoRegistro input").value;
+  console.log("es", nombre);
+  // Hacer una solicitud AJAX para buscar el alumno por nombre
+  // Hacer una solicitud AJAX para obtener los datos de los pagos del usuario
+
+  fetch(`/buscarAlumno?nombre=${nombre}`)
+    .then((response) => response.json())
+    .then((data) => {
+      // Obtener el cuerpo de la tabla
+      const cuerpoTabla = document.getElementById("cuerpoTabla");
+
+      // Limpiar el contenido actual de la tabla
+      cuerpoTabla.innerHTML = "";
+      console.log("estudiante: ", data.alumno);
+
+      usuarioActualId = data.alumno.IdUsuario;
+
+      alumno = {
+        IdUsuario: data.alumno.IdUsuario,
+        Nombre: data.alumno.Nombre,
+        Apellido_paterno: data.alumno.Apellido_paterno,
+        Apellido_materno: data.alumno.Apellido_materno,
+        Correo: data.alumno.Correo,
+        Matricula: data.alumno.Matricula,
+        Telefono: data.alumno.Telefono,
+        Referencia: data.alumno.Referencia,
+      };
+
+      setearCombobox();
+
+      document.getElementById(
+        "titleReferenciaPersonalizada"
+      ).innerText = `Registrar n° Ref a n° matricula: ${alumno.Matricula}`;
+
+      document.getElementById("nroReferencia").value = alumno.Referencia;
+
+      // Iterar sobre los datos de los pagos y agregar filas a la tabla
+      data.pagos.forEach((pago) => {
+        usuarioActualId = pago.idUsuario;
+        console.log(
+          "buscarAlumnoRegistro -> usuarioActualId:",
+          usuarioActualId
+        );
+        // Solo agregar la fila si el estado es "Pendiente"
+        if (pago.estado === "Pendiente") {
+          const fila = `
+    <tr>
+        <td>${pago.idPago}</td>
+        <td>${pago.monto}</td>
+        <td>${pago.fechaEmision.substring(0, 10)}</td>
+        <td>${pago.fechaLimite.substring(0, 10)}</td>
+        <td>${
+          pago.fechaPago ? pago.fechaPago.substring(0, 10) : "------------"
+        }</td>
+        <td style="color: red">${pago.estado}</td>
+        <td>${
+          pago.modalidad ? pago.modalidad.substring(0, 10) : "------------"
+        }</td>
+        <td>${pago.concepto}</td>
+        <td>
+        <div class="form-check" id="check">
+        <input class="form-check-input checkbox-pago" type="checkbox" value="${
+          pago.monto
+        }" id="checkbox-${pago.idPago}" onclick="handleCheckboxClick(this, '${
+            pago.idPago
+          }','${pago.monto}','${pago.concepto}')">
+
+        <label class="form-check-label" for="flexCheckDefault">        
+        </label>
+        </div>
+        </td>
+        <td>
+
+        <button onclick="toggleSVGColor(this, '${pago.idPago}','${
+            pago.monto
+          }','${pago.concepto}' ,'${pago.fechaLimite.substring(0, 10)}')">
+        <div id="ficha" class="pdf">
+            <svg xmlns="http://www.w3.org/2000/svg" width="25" height="20" fill="currentColor" class="bi bi-filetype-pdf" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M14 4.5V14a2 2 0 0 1-2 2h-1v-1h1a1 1 0 0 0 1-1V4.5h-2A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v9H2V2a2 2 0 0 1 2-2h5.5zM1.6 11.85H0v3.999h.791v-1.342h.803q.43 0 .732-.173.305-.175.463-.474a1.4 1.4 0 0 0 .161-.677q0-.375-.158-.677a1.2 1.2 0 0 0-.46-.477q-.3-.18-.732-.179m.545 1.333a.8.8 0 0 1-.085.38.57.57 0 0 1-.238.241.8.8 0 0 1-.375.082H.788V12.48h.66q.327 0 .512.181.185.183.185.522m1.217-1.333v3.999h1.46q.602 0 .998-.237a1.45 1.45 0 0 0 .595-.689q.196-.45.196-1.084 0-.63-.196-1.075a1.43 1.43 0 0 0-.589-.68q-.396-.234-1.005-.234zm.791.645h.563q.371 0 .609.152a.9.9 0 0 1 .354.454q.118.302.118.753a2.3 2.3 0 0 1-.068.592 1.1 1.1 0 0 1-.196.422.8.8 0 0 1-.334.252 1.3 1.3 0 0 1-.483.082h-.563zm3.743 1.763v1.591h-.79V11.85h2.548v.653H7.896v1.117h1.606v.638z"/>
+            </svg>
+        </div>
+    </button>
+        
+        </td>
+
+    
+    </tr>
+`;
+          cuerpoTabla.innerHTML += fila;
+        }
+      });
+    })
+    .catch((error) => console.error("Error al buscar alumno:", error));
+}
+
+function getBase64Image(img) {
+  // Crea un elemento canvas
+  var canvas = document.createElement("canvas");
+  canvas.width = img.width;
+  canvas.height = img.height;
+
+  // Dibuja la imagen en el canvas
+  var ctx = canvas.getContext("2d");
+  ctx.drawImage(img, 0, 0);
+
+  // Obtiene la imagen en formato base64
+  var dataURL = canvas.toDataURL("image/png");
+
+  return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+}
+
+function toggleSVGColor(button, idPago, monto, concepto, fechaLimite) {
+  var ficha = button.querySelector("#ficha");
+  ficha.classList.toggle("active"); // Cambia la clase para cambiar el color
+  setTimeout(() => {
+    ficha.classList.remove("active"); // Remueve la clase después de un breve tiempo
+  }, 400); // 500 ms después de hacer clic
+
+  console.log(`Generando PDf ${idPago} ${monto} ${concepto} ${fechaLimite}`);
+  // Crear una instancia de jsPDF
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+
+  // Asegúrate de que las posiciones Y son únicas para cada línea de texto
+  let y = 10;
+  const lineHeight = 10; // Altura de línea para separar las líneas de texto
+
+  doc.text(`ID de Pago: ${idPago}`, 10, y);
+  y += lineHeight; // Incrementa la posición y para la próxima línea de texto
+
+  doc.text(
+    `Alumno: ${alumno.Nombre} ${alumno.Apellido_paterno} ${alumno.Apellido_materno}`,
+    10,
+    y
+  );
+  y += lineHeight; // y así sucesivamente...
+
+  doc.text(`Monto: ${monto} USD`, 10, y);
+  y += lineHeight;
+
+  doc.text(`Fecha de pago : ${fechaLimite}`, 10, y);
+  y += lineHeight;
+
+  doc.text(`N° referencia: ${alumno.Referencia}`, 10, y);
+  y += lineHeight;
+
+  doc.text(`Concepto: ${concepto}`, 10, y);
+  y += lineHeight;
+
+  doc.text(`Fecha Límite: ${fechaLimite}`, 10, y);
+  y += lineHeight;
+
+  doc.text(`Cta. Bancaria: 4135-7867-6589-123`, 10, y);
+  y += lineHeight;
+
+  doc.text(`Nombre de la cuenta: Instituto Via Diseño`, 10, y);
+  // No necesitas incrementar y aquí si no hay más texto después
+
+  //Añadir la imagen en otra columna
+  // Supongamos que la imagen está codificada en base64
+
+  var image = new Image();
+  image.onload = function () {
+    var base64 = getBase64Image(image);
+    console.log(base64); // Imprime la cadena base64 de la imagen en la consola
+  };
+  image.src = "https://i.ibb.co/YBNPpjF/via-Dise-o-Logo-Grande.png"; // Asegúrate de tener acceso a la imag
+  // Posición de la imagen (x, y, ancho, alto)
+  doc.addImage(image, "PNG", 130, 10, 70, 70); // Ajusta las coordenadas como sea necesario
+
+  // Guardar el documento
+  doc.save(`Pago_${idPago}.pdf`);
+}
+
+function handleCheckboxClick(clickedCheckbox, clickedId, monto, concepto) {
+  // Obtener todos los checkboxes
+  const checkboxes = document.querySelectorAll(".checkbox-pago");
+
+  // Iterar sobre todos los checkboxes
+  checkboxes.forEach((checkbox) => {
+    // Si el ID del checkbox no coincide con el que fue clickeado, deseleccionarlo
+    if (checkbox.id !== `checkbox-${clickedId}`) {
+      checkbox.checked = false;
+    }
+  });
+  // Asegurar que el checkbox clickeado esté seleccionado
+  clickedCheckbox.checked = true;
+
+  console.log(clickedId);
+  console.log(monto);
+  console.log(concepto);
+  console.log(fechaHoy);
+
+  document.getElementById("montoRegistrarPaEfTr").value = monto;
+  var conceptoRegistrarPaEfTr = document.getElementById(
+    "conceptoRegistrarPaEfTr"
+  );
+  conceptoRegistrarPaEfTr.value = concepto;
+  document.getElementById("fechaPagoRegistrarPaEfTr").value = fechaHoy;
+
+  document.getElementById(
+    "cardRegPagoEfTr"
+  ).innerText = `Registrar pago Efect./Transf. idPago:${clickedId}`;
+
+  checkboxClickedId = clickedId;
+  checkboxClickedMonto = monto;
+  checkboxClickedConcepto = concepto;
+}
+
+function solicitarCobro() {
+  //   Obtener los valores de los campos del formulario
+  const fechaEmision = document.getElementById("fechaEmision").value;
+  const fechaLimite = document.getElementById("fechaLimite").value;
+  const monto = document.getElementById("monto").value;
+  const concepto = document.getElementById("concepto").value;
+
+  console.log("registrarCobro -> usuarioActualId:", usuarioActualId);
+
+  if (!usuarioActualId) {
+    alert("No hay un usuario seleccionado.");
+    return;
+  }
+  const datosSolicitud = {
+    idUsuario: usuarioActualId, // Aquí supongo que idUsuario se obtiene de alguna manera externa
+    fechaEmision: fechaEmision,
+    fechaLimite: fechaLimite,
+    fechaPago: null, // o null si tu base de datos lo permite
+    monto: monto,
+    estado: "Pendiente",
+    modalidad: null, // o la modalidad que corresponda
+    concepto: concepto,
+  };
+
+  // Realizar la solicitud AJAX con fetch
+  fetch("/solicitarCobro", {
+    // Reemplaza con la ruta de tu servidor
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(datosSolicitud),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Error en la respuesta del servidor");
+      }
+      return response.json();
+    })
+    .then((data) => {
+      // Aquí manejas la respuesta del servidor. Por ejemplo, puedes mostrar un mensaje al usuario
+      console.log(data.message);
+      buscarAlumnoRegistro();
+    })
+    .catch((error) => {
+      // Aquí manejas los errores de la solicitud
+      console.error("Error al registrar la solicitud de cobro:", error);
+    });
+}
