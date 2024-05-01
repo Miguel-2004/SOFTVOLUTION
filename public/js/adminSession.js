@@ -292,7 +292,7 @@ function actionHistoiralPDF(button) {
       })
       .catch((error) => console.error("Error al buscar alumno:", error));
   }
-  
+
   function guardarCambios(idPago, idUsuario) {
     // Convertir los valores a los tipos de datos correspondientes
     idPago = parseInt(idPago); // Convertir a número entero
@@ -389,4 +389,478 @@ function actionHistoiralPDF(button) {
         document.body.style.overflow = ""; // Restablecer el desplazamiento
         document.body.classList.remove("modal-open");
       });
+  }
+
+  
+function registros() {
+    document.getElementById("tituloNavbar").innerText = "Registros";
+  
+    contenedor = document.getElementById("contenedor");
+    contenedor.innerHTML = "";
+  
+    contenedor.innerHTML = `
+      <div id="buscarAlumnoRegistro" class="col-6" style="padding-top: 2%">
+    <div class="input-group mb-3">
+      <input id="inputNombreBuscarR" type="text" class="form-control" placeholder="Nombre Paterno Materno" aria-label="Recipient's username" aria-describedby="button-addon2">
+      <button class="btn btn-outline-secondary" type="button" id="button-addon2" onclick="buscarAlumnoRegistro()">Buscar</button>
+    </div>
+  </div>
+  
+  
+  <!-- Tabla de Pagos -->
+  <table id="tablaPagos" class="table">
+    <thead>
+      <tr>
+        <th scope="col">ID Pagos</th>
+        <th scope="col">Monto</th>
+        <th scope="col">Fecha Emisión</th>
+        <th scope="col">Fecha Límite</th>
+        <th scope="col">Fecha Pago</th>
+        <th scope="col">Estado</th>
+        <th scope="col">Modalidad</th>
+        <th scope="col">Concepto</th>
+        <th scope="col">Seleccionar</th>
+        <th scope="col">Generar Ficha</th>
+      </tr>
+    </thead>
+    <tbody id="cuerpoTabla">
+      <!-- Aquí se cargarán los datos de los pagos -->
+    </tbody>
+  </table>
+  
+  
+  
+  
+  <div class="row">
+  
+  
+  
+    <div class="col-md-6" id="formularioSolicitarCobro">
+      <div class="card">
+        <div class="card-body">
+  
+          <!-- Título -->
+          <h5 class="card-title">Solicitud de cobro</h5>
+  
+          <!-- Formulario -->
+          <form id="formulario1">
+  
+            <!-- Fecha solicitud -->
+            <div class="mb-3">
+              <label for="fecha_solicitud">Fecha solicitud</label>
+              <input type="date" class="form-control" id="fechaEmision" placeholder="Seleccione la fecha">
+            </div>
+  
+            <!-- Fecha límite -->
+            <div class="mb-3">
+              <label for="fecha_limite">Fecha límite</label>
+              <input type="date" class="form-control" id="fechaLimite" placeholder="Seleccione la fecha">
+            </div>
+  
+            <!-- Monto -->
+            <div class="mb-3">
+              <label for="monto">Monto</label>
+              <input type="number" class="form-control" id="monto" placeholder="Ingrese el monto">
+            </div>
+  
+            <!-- Concepto -->
+            <div class="mb-3">
+              <label for="concepto">Concepto</label>
+              <select class="form-control" id="concepto">
+                <option value="Colegiatura">Colegiatura</option>
+                <option value="Otros pagos">Otros pagos</option>
+              </select>
+            </div>
+  
+            <!-- Botón de registro -->
+            <button type="submit" class="btn btn-primary" style="background-color: #9E3232;">Solicitar Cobro</button>
+                          </form>
+                      </div>
+                  </div>
+              </div>
+  
+  
+    <div class=" col-md-6" id="registrarPagoEfectivoTransferencia">
+              <div class="card">
+                <div class="card-body">
+                  <!-- Título -->
+                  <h5 class="card-title" id="cardRegPagoEfTr">Registrar pago Efect./Transf. idPago:</h5>
+  
+                  <!-- Formulario -->
+                  <form id="formulario2">
+  
+                    <div class="mb-3" style="display: flex;">
+  
+                      <div class="flex-large" style="flex: 30%;">
+                        <label for="modalidad">Modalidad</label>
+                        <select class="form-control" id="modalidadEfectTrans">
+                          <option value="Efectivo">Efectivo</option>
+                          <option value="transferencia">Transferencia</option>
+                        </select>
+                      </div>
+  
+                      <div class="flex-small" style="flex: 70%; display: none;" id="uploadField">
+                        <label for="transferImage">Subir Archivo</label>
+                        <input type="file" class="form-control" id="transferImage" name="transferImage">
+                      </div>
+  
+                    </div>
+  
+  
+                    <!-- Monto -->
+                    <div class="mb-3">
+                      <label for="monto">Monto</label>
+                      <input type="number" class="form-control" id="montoRegistrarPaEfTr" placeholder="Ingrese el monto">
+                    </div>
+  
+                    <!-- Fecha de pago -->
+                    <div class="mb-3">
+                      <label for="fecha_pago">Fecha pago</label>
+                      <input type="date" class="form-control" id="fechaPagoRegistrarPaEfTr" placeholder="Seleccione la fecha">
+                    </div>
+  
+                    <!-- Concepto -->
+                    <div class="mb-3">
+                      <label for="concepto">Concepto</label>
+                      <select class="form-control" id="conceptoRegistrarPaEfTr">
+                        <option value="Colegiatura">Colegiatura</option>
+                        <option value="Otros pagos">Otros pagos</option>
+                      </select>
+                    </div>
+  
+                    <!-- Botón de registro -->
+                    <button type="submit" class="btn btn-success" style="background-color: #9E3232;">Registrar pago</button>
+                  </form>
+                </div>
+              </div>
+        </div>
+  
+      </div>
+  
+    </div>
+  
+  
+  
+  
+    <div class="row" style="padding-top: 2%">
+  
+      <div class="col-md-6" id="referenciaPersonalizada">
+  
+        <div class="card">
+          <div class="card-body">
+            <!-- Título -->
+            <h5 class="card-title" id="titleReferenciaPersonalizada" >Registrar Ref matricula:</h5>
+  
+            <!-- Formulario -->
+            <form id="formulario3">
+  
+              <!-- Monto -->
+              <div class="mb-3">
+                <label for="nroReferencia">Numero de referencia</label>
+                <input type="number" class="form-control" id="nroReferencia" placeholder="Ingrese el n° referencia">
+              </div>
+  
+  
+              <!-- Botón de registro -->
+              <button type="submit" class="btn btn-success" style="background-color: #9E3232;" ">Registrar n° referencia</button>
+              </form>
+          </div>
+      </div>
+  </div>
+  
+  
+  <div class=" col-md-6" id="registrarCicloEscolar">
+                <div class="card">
+                  <div class="card-body">
+                    <!-- Título -->
+                    <h5 class="card-title" id="cardRegPagoEfTr">Registrar Ciclo Escolar</h5>
+  
+                    <!-- Formulario -->
+  
+                    <form id="formulario4">
+  
+                      <div class="mb-3" ">
+                        <label for="cicloEscolar">Ciclo actual</label>
+                        <select class="form-control" id="seleccionarCicloEscolar">
+                        </select>
+                        </div>
+  
+                      <!-- Botón de registro -->
+                      <button type="submit" class="btn btn-dark" style="background-color: #9E3232;">Registrar Ciclo</button>
+                    </form>
+                  </div>
+                </div>
+          </div>
+  
+        </div>
+  
+      </div>
+  
+  
+        `;
+  
+    document.getElementById("inputNombreBuscarR").value = nombre;
+    buscarAlumnoRegistro();
+  
+    llenarComboBoxCicloEscolar();
+  
+    const formularioSolicitarCobro = document.getElementById(
+      "formularioSolicitarCobro"
+    );
+  
+    formularioSolicitarCobro.addEventListener("submit", function (event) {
+      event.preventDefault(); // Esto previene el comportamiento por defecto del formulario
+      solicitarCobro(); // Llama a la función solicitarCobro cuando se haga submit al formulario
+    });
+  
+    const registrarPagoEfectivoTransferencia = document.getElementById(
+      "registrarPagoEfectivoTransferencia"
+    );
+  
+    registrarPagoEfectivoTransferencia.addEventListener(
+      "submit",
+      function (event) {
+        event.preventDefault(); // Esto previene el comportamiento por defecto del formulario
+        registrarPagoEfectivoTransferenciaFunc(); // Llama a la función registrarPagoEfectivoTransferencia cuando se haga submit al formulario
+      }
+    );
+  
+    const seleccionarCicloEscolar = document.getElementById(
+      "seleccionarCicloEscolar"
+    );
+  
+    registrarCicloEscolar.addEventListener("submit", function (event) {
+      event.preventDefault(); // Esto previene el comportamiento por defecto del formulario
+      registrarCicloEscolarFunction(); // Llama a la función registrarPagoEfectivoTransferencia cuando se haga submit al formulario
+    });
+  
+    const referenciaPersonalizada = document.getElementById(
+      "referenciaPersonalizada"
+    );
+  
+    referenciaPersonalizada.addEventListener("submit", function (event) {
+      event.preventDefault(); // Esto previene el comportamiento por defecto del formulario
+      RegistrarReferenciaPersonalizada(); // Llama a la función registrarPagoEfectivoTransferencia cuando se haga submit al formulario
+    });
+    // Añadir el controlador de eventos después de actualizar el DOM
+    document
+      .getElementById("modalidadEfectTrans")
+      .addEventListener("change", function () {
+        const uploadField = document.getElementById("uploadField");
+        if (this.value === "transferencia") {
+          uploadField.style.display = "block"; // Muestra el campo de archivo
+        } else {
+          uploadField.style.display = "none"; // Oculta el campo de archivo
+        }
+      });
+  }
+  function buscarAlumnoRegistro() {
+    // Obtener el valor del input de búsqueda
+    nombre = document.querySelector("#buscarAlumnoRegistro input").value;
+    console.log("es", nombre);
+    // Hacer una solicitud AJAX para buscar el alumno por nombre
+    // Hacer una solicitud AJAX para obtener los datos de los pagos del usuario
+  
+    fetch(`/buscarAlumno?nombre=${nombre}`)
+      .then((response) => response.json())
+      .then((data) => {
+        // Obtener el cuerpo de la tabla
+        const cuerpoTabla = document.getElementById("cuerpoTabla");
+  
+        // Limpiar el contenido actual de la tabla
+        cuerpoTabla.innerHTML = "";
+        console.log("estudiante: ", data.alumno);
+  
+        usuarioActualId = data.alumno.IdUsuario;
+  
+        alumno = {
+          IdUsuario: data.alumno.IdUsuario,
+          Nombre: data.alumno.Nombre,
+          Apellido_paterno: data.alumno.Apellido_paterno,
+          Apellido_materno: data.alumno.Apellido_materno,
+          Correo: data.alumno.Correo,
+          Matricula: data.alumno.Matricula,
+          Telefono: data.alumno.Telefono,
+          Referencia: data.alumno.Referencia,
+        };
+  
+        setearCombobox();
+  
+        document.getElementById(
+          "titleReferenciaPersonalizada"
+        ).innerText = `Registrar n° Ref a n° matricula: ${alumno.Matricula}`;
+  
+        document.getElementById("nroReferencia").value = alumno.Referencia;
+  
+        // Iterar sobre los datos de los pagos y agregar filas a la tabla
+        data.pagos.forEach((pago) => {
+          usuarioActualId = pago.idUsuario;
+          console.log(
+            "buscarAlumnoRegistro -> usuarioActualId:",
+            usuarioActualId
+          );
+          // Solo agregar la fila si el estado es "Pendiente"
+          if (pago.estado === "Pendiente") {
+            const fila = `
+      <tr>
+          <td>${pago.idPago}</td>
+          <td>${pago.monto}</td>
+          <td>${pago.fechaEmision.substring(0, 10)}</td>
+          <td>${pago.fechaLimite.substring(0, 10)}</td>
+          <td>${
+            pago.fechaPago ? pago.fechaPago.substring(0, 10) : "------------"
+          }</td>
+          <td style="color: red">${pago.estado}</td>
+          <td>${
+            pago.modalidad ? pago.modalidad.substring(0, 10) : "------------"
+          }</td>
+          <td>${pago.concepto}</td>
+          <td>
+          <div class="form-check" id="check">
+          <input class="form-check-input checkbox-pago" type="checkbox" value="${
+            pago.monto
+          }" id="checkbox-${pago.idPago}" onclick="handleCheckboxClick(this, '${
+              pago.idPago
+            }','${pago.monto}','${pago.concepto}')">
+  
+          <label class="form-check-label" for="flexCheckDefault">        
+          </label>
+          </div>
+          </td>
+          <td>
+  
+          <button onclick="toggleSVGColor(this, '${pago.idPago}','${
+              pago.monto
+            }','${pago.concepto}' ,'${pago.fechaLimite.substring(0, 10)}')">
+          <div id="ficha" class="pdf">
+              <svg xmlns="http://www.w3.org/2000/svg" width="25" height="20" fill="currentColor" class="bi bi-filetype-pdf" viewBox="0 0 16 16">
+                  <path fill-rule="evenodd" d="M14 4.5V14a2 2 0 0 1-2 2h-1v-1h1a1 1 0 0 0 1-1V4.5h-2A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v9H2V2a2 2 0 0 1 2-2h5.5zM1.6 11.85H0v3.999h.791v-1.342h.803q.43 0 .732-.173.305-.175.463-.474a1.4 1.4 0 0 0 .161-.677q0-.375-.158-.677a1.2 1.2 0 0 0-.46-.477q-.3-.18-.732-.179m.545 1.333a.8.8 0 0 1-.085.38.57.57 0 0 1-.238.241.8.8 0 0 1-.375.082H.788V12.48h.66q.327 0 .512.181.185.183.185.522m1.217-1.333v3.999h1.46q.602 0 .998-.237a1.45 1.45 0 0 0 .595-.689q.196-.45.196-1.084 0-.63-.196-1.075a1.43 1.43 0 0 0-.589-.68q-.396-.234-1.005-.234zm.791.645h.563q.371 0 .609.152a.9.9 0 0 1 .354.454q.118.302.118.753a2.3 2.3 0 0 1-.068.592 1.1 1.1 0 0 1-.196.422.8.8 0 0 1-.334.252 1.3 1.3 0 0 1-.483.082h-.563zm3.743 1.763v1.591h-.79V11.85h2.548v.653H7.896v1.117h1.606v.638z"/>
+              </svg>
+          </div>
+      </button>
+          
+          </td>
+  
+      
+      </tr>
+  `;
+            cuerpoTabla.innerHTML += fila;
+          }
+        });
+      })
+      .catch((error) => console.error("Error al buscar alumno:", error));
+  }
+  
+  function getBase64Image(img) {
+    // Crea un elemento canvas
+    var canvas = document.createElement("canvas");
+    canvas.width = img.width;
+    canvas.height = img.height;
+  
+    // Dibuja la imagen en el canvas
+    var ctx = canvas.getContext("2d");
+    ctx.drawImage(img, 0, 0);
+  
+    // Obtiene la imagen en formato base64
+    var dataURL = canvas.toDataURL("image/png");
+  
+    return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+  }
+  
+  function toggleSVGColor(button, idPago, monto, concepto, fechaLimite) {
+    var ficha = button.querySelector("#ficha");
+    ficha.classList.toggle("active"); // Cambia la clase para cambiar el color
+    setTimeout(() => {
+      ficha.classList.remove("active"); // Remueve la clase después de un breve tiempo
+    }, 400); // 500 ms después de hacer clic
+  
+    console.log(`Generando PDf ${idPago} ${monto} ${concepto} ${fechaLimite}`);
+    // Crear una instancia de jsPDF
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+  
+    // Asegúrate de que las posiciones Y son únicas para cada línea de texto
+    let y = 10;
+    const lineHeight = 10; // Altura de línea para separar las líneas de texto
+  
+    doc.text(`ID de Pago: ${idPago}`, 10, y);
+    y += lineHeight; // Incrementa la posición y para la próxima línea de texto
+  
+    doc.text(
+      `Alumno: ${alumno.Nombre} ${alumno.Apellido_paterno} ${alumno.Apellido_materno}`,
+      10,
+      y
+    );
+    y += lineHeight; // y así sucesivamente...
+  
+    doc.text(`Monto: ${monto} USD`, 10, y);
+    y += lineHeight;
+  
+    doc.text(`Fecha de pago : ${fechaLimite}`, 10, y);
+    y += lineHeight;
+  
+    doc.text(`N° referencia: ${alumno.Referencia}`, 10, y);
+    y += lineHeight;
+  
+    doc.text(`Concepto: ${concepto}`, 10, y);
+    y += lineHeight;
+  
+    doc.text(`Fecha Límite: ${fechaLimite}`, 10, y);
+    y += lineHeight;
+  
+    doc.text(`Cta. Bancaria: 4135-7867-6589-123`, 10, y);
+    y += lineHeight;
+  
+    doc.text(`Nombre de la cuenta: Instituto Via Diseño`, 10, y);
+    // No necesitas incrementar y aquí si no hay más texto después
+  
+    //Añadir la imagen en otra columna
+    // Supongamos que la imagen está codificada en base64
+  
+    var image = new Image();
+    image.onload = function () {
+      var base64 = getBase64Image(image);
+      console.log(base64); // Imprime la cadena base64 de la imagen en la consola
+    };
+    image.src = "https://i.ibb.co/YBNPpjF/via-Dise-o-Logo-Grande.png"; // Asegúrate de tener acceso a la imag
+    // Posición de la imagen (x, y, ancho, alto)
+    doc.addImage(image, "PNG", 130, 10, 70, 70); // Ajusta las coordenadas como sea necesario
+  
+    // Guardar el documento
+    doc.save(`Pago_${idPago}.pdf`);
+  }
+  
+  function handleCheckboxClick(clickedCheckbox, clickedId, monto, concepto) {
+    // Obtener todos los checkboxes
+    const checkboxes = document.querySelectorAll(".checkbox-pago");
+  
+    // Iterar sobre todos los checkboxes
+    checkboxes.forEach((checkbox) => {
+      // Si el ID del checkbox no coincide con el que fue clickeado, deseleccionarlo
+      if (checkbox.id !== `checkbox-${clickedId}`) {
+        checkbox.checked = false;
+      }
+    });
+    // Asegurar que el checkbox clickeado esté seleccionado
+    clickedCheckbox.checked = true;
+  
+    console.log(clickedId);
+    console.log(monto);
+    console.log(concepto);
+    console.log(fechaHoy);
+  
+    document.getElementById("montoRegistrarPaEfTr").value = monto;
+    var conceptoRegistrarPaEfTr = document.getElementById(
+      "conceptoRegistrarPaEfTr"
+    );
+    conceptoRegistrarPaEfTr.value = concepto;
+    document.getElementById("fechaPagoRegistrarPaEfTr").value = fechaHoy;
+  
+    document.getElementById(
+      "cardRegPagoEfTr"
+    ).innerText = `Registrar pago Efect./Transf. idPago:${clickedId}`;
+  
+    checkboxClickedId = clickedId;
+    checkboxClickedMonto = monto;
+    checkboxClickedConcepto = concepto;
   }
