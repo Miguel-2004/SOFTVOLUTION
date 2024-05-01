@@ -864,4 +864,98 @@ function registros() {
     checkboxClickedMonto = monto;
     checkboxClickedConcepto = concepto;
   }
+  function solicitarCobro() {
+    //   Obtener los valores de los campos del formulario
+    const fechaEmision = document.getElementById("fechaEmision").value;
+    const fechaLimite = document.getElementById("fechaLimite").value;
+    const monto = document.getElementById("monto").value;
+    const concepto = document.getElementById("concepto").value;
   
+    console.log("registrarCobro -> usuarioActualId:", usuarioActualId);
+  
+    if (!usuarioActualId) {
+      alert("No hay un usuario seleccionado.");
+      return;
+    }
+    const datosSolicitud = {
+      idUsuario: usuarioActualId, // Aquí supongo que idUsuario se obtiene de alguna manera externa
+      fechaEmision: fechaEmision,
+      fechaLimite: fechaLimite,
+      fechaPago: null, // o null si tu base de datos lo permite
+      monto: monto,
+      estado: "Pendiente",
+      modalidad: null, // o la modalidad que corresponda
+      concepto: concepto,
+    };
+  
+    // Realizar la solicitud AJAX con fetch
+    fetch("/solicitarCobro", {
+      // Reemplaza con la ruta de tu servidor
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(datosSolicitud),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Error en la respuesta del servidor");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        // Aquí manejas la respuesta del servidor. Por ejemplo, puedes mostrar un mensaje al usuario
+        console.log(data.message);
+        buscarAlumnoRegistro();
+      })
+      .catch((error) => {
+        // Aquí manejas los errores de la solicitud
+        console.error("Error al registrar la solicitud de cobro:", error);
+      });
+
+  }  
+
+  function registrarPagoEfectivoTransferenciaFunc() {
+    // Obteniendo los valores de los campos del formulario
+  
+    const fechaPago = document.getElementById("fechaPagoRegistrarPaEfTr").value;
+    const modalidad = document.getElementById("modalidadEfectTrans").value;
+    const idPago = document
+      .getElementById("cardRegPagoEfTr")
+      .innerText.split(":")[1]
+      .trim();
+  
+    console.log(
+      `verificando regitro datos  ${idPago}, ${fechaPago}, ${modalidad}`
+    );
+    // Opcional: Handle file upload
+  
+    datos = {
+      idPago: idPago,
+      fechaPago: fechaPago,
+      modalidad: modalidad,
+    };
+  
+    // Realizar la petición AJAX
+    fetch("/ActualizarPagoEfectTrans", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(datos),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Error en la respuesta del servidor");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data.message); // Mensaje de éxito del servidor
+        buscarAlumnoRegistro();
+      })
+      .catch((error) => {
+        console.error("Error al actualizar el pago:", error);
+        // Mostrar algún mensaje de error al usuario aquí si es necesario
+      });
+  }
