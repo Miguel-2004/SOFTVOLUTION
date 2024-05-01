@@ -997,6 +997,7 @@ function registros() {
       });
   }
   
+
 function llenarComboBoxCicloEscolar() {
     const comboBox = document.getElementById("seleccionarCicloEscolar");
     comboBox.innerHTML = ""; // Limpiar opciones existentes
@@ -1065,5 +1066,48 @@ function llenarComboBoxCicloEscolar() {
         });
       })
       .catch((error) => console.error("Error al cargar los ciclos:", error));
+  }
+
+
+  function reportesFechasFijas(desde, hasta) {
+    document.getElementById("fechaDesde").value = desde;
+    document.getElementById("fechaHasta").value = hasta;
+  
+    console.log(`desde${desde}`);
+    console.log(`hasta${hasta}`);
+  
+    if (desde && hasta) {
+      fetch(
+        `/consultarPagosDesdeHasta?desde=${encodeURIComponent(
+          desde
+        )}&hasta=${encodeURIComponent(hasta)}`,
+        {
+          method: "GET", // Método HTTP, GET es típico para consultas
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      )
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Error en la solicitud");
+          }
+          return response.json(); // Procesar la respuesta como JSON
+        })
+        .then((data) => {
+          console.log("Datos recibidos:", data); // Ver los datos en la consola para depurar
+  
+          let dataModalidaPago = filtrarDataModalidaPago(data.pagos);
+          let dataIngresosMensuales = filtrarDataIngresosMensuales(data.pagos);
+  
+          // Suponiendo que refrescarGraficos es una función que actualiza gráficos en tu página:
+          refrescarGraficos(dataModalidaPago, dataIngresosMensuales);
+  
+          // Si necesitas hacer más procesos o llamadas aquí, puedes continuar
+        })
+        .catch((error) => {
+          console.error("Error durante la petición:", error); // Manejo de errores en caso de fallo en la petición
+        });
+    }
   }
   
