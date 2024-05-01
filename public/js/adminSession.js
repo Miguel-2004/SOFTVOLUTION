@@ -127,4 +127,266 @@ function actionHistoiralPDF(button) {
     // Guardar el documento
     doc.save("historial-pagos.pdf");
   }
+  function buscarAlumno() {
+    historialPagoList = [];
   
+    nombre = document.querySelector("#buscarAlumno input").value;
+    console.log(nombre);
+    // Hacer una solicitud AJAX para buscar el alumno por nombre
+    // Hacer una solicitud AJAX para obtener los datos de los pagos del usuario
+    fetch(`/buscarAlumno?nombre=${nombre}`)
+      .then((response) => response.json())
+      .then((data) => {
+        // Obtener el cuerpo de la tabla
+        const cuerpoTabla = document.getElementById("cuerpoTabla");
+  
+        // Limpiar el contenido actual de la tabla
+        cuerpoTabla.innerHTML = "";
+  
+        alumno = {
+          IdUsuario: data.alumno.IdUsuario,
+          Nombre: data.alumno.Nombre,
+          Apellido_paterno: data.alumno.Apellido_paterno,
+          Apellido_materno: data.alumno.Apellido_materno,
+          Correo: data.alumno.Correo,
+          Matricula: data.alumno.Matricula,
+          Telefono: data.alumno.Telefono,
+          Referencia: data.alumno.Referencia,
+        };
+  
+     
+  
+     
+  
+        // Iterar sobre los datos de los pagos y agregar filas a la tabla
+        data.pagos.forEach((pago) => {
+          pagoX = {
+            idPago: pago.idPago,
+            monto: pago.monto,
+            fechaEmision: pago.fechaEmision.substring(0, 10),
+            fechaLimite: pago.fechaLimite.substring(0, 10),
+            fechaPago: pago.fechaPago
+              ? pago.fechaPago.substring(0, 10)
+              : "------------",
+            estado: pago.estado,
+            modalidad: pago.modalidad
+              ? pago.modalidad.substring(0, 10)
+              : "------------",
+            concepto: pago.concepto,
+            estado: pago.estado,
+          };
+  
+          historialPagoList.push(pagoX);
+          usuarioActualId = pago.idUsuario;
+  
+          const fila = `
+  <tr>
+      <td>${pago.idPago}</td>
+      <td>${pago.monto}</td>
+      <td>${pago.fechaEmision.substring(0, 10)}</td>
+      <td>${pago.fechaLimite.substring(0, 10)}</td>
+      <td>${
+        pago.fechaPago ? pago.fechaPago.substring(0, 10) : "------------"
+      }</td>
+      <td style="color: ${pago.estado === "Aprobado" ? "green" : "red"}">${
+            pago.estado
+          }</td>
+      <td>${
+        pago.modalidad ? pago.modalidad.substring(0, 10) : "------------"
+      }</td>
+      <td>${pago.concepto}</td>
+      <td>
+          ${
+            pago.estado !== "Aprobado"
+              ? `
+              <!-- Botón para abrir el modal -->
+              <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal-${
+                pago.idPago
+              }">
+                  Modificar
+              </button>
+  
+              <!-- Modal -->
+              <div class="modal fade" id="exampleModal-${
+                pago.idPago
+              }" tabindex="-1" aria-labelledby="exampleModalLabel-${
+                  pago.idPago
+                }" aria-hidden="true">
+                  <div class="modal-dialog">
+                      <div class="modal-content">
+                          <div class="modal-header">
+                              <h5 class="modal-title" id="exampleModalLabel">Editar Pago</h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                              <form>
+                  <div class="mb-3">
+                  <label for="monto" class="form-label">Monto</label>
+                  <input type="text" class="form-control" id="montoUpdate-${
+                    pago.idPago
+                  }" value="${pago.monto}">
+                  </div>
+                  <div class="mb-3">
+                  <label for="fechaEmision" class="form-label">Fecha Emisión</label>
+                  <input type="date" class="form-control" id="fechaEmisionUpdate-${
+                    pago.idPago
+                  }" value="${
+                  pago.fechaEmision
+                    ? pago.fechaEmision.substring(0, 10)
+                    : "------------"
+                }">
+                  </div>
+                  <div class="mb-3">
+                  <label for="fechaLimite" class="form-label">Fecha Límite</label>
+                  <input type="date" class="form-control" id="fechaLimiteUpdate-${
+                    pago.idPago
+                  }" value="${
+                  pago.fechaLimite ? pago.fechaLimite.substring(0, 10) : ""
+                }">
+                  </div>
+                  <div class="mb-3">
+                  <label for="fechaPago" class="form-label">Fecha Pago</label>
+                  <input type="date" class="form-control" id="fechaPagoUpdate-${
+                    pago.idPago
+                  }" value="${
+                  pago.fechaPago ? pago.fechaPago.substring(0, 10) : ""
+                }">
+                  </div>
+                  <div class="mb-3">
+                  <label for="estado" class="form-label">Estado</label>
+                  <input type="text" class="form-control" id="estadoUpdate-${
+                    pago.idPago
+                  }" value="${pago.estado}">
+                  </div>
+                  <div class="mb-3">
+                  <label for="modalidad" class="form-label">Modalidad</label>
+                  <input type="text" class="form-control" id="modalidadUpdate-${
+                    pago.idPago
+                  }" value="${pago.modalidad}">
+                  </div>
+                  <div class="mb-3">
+                  <label for="concepto" class="form-label">Concepto</label>
+                  <input type="text" class="form-control" id="conceptoUpdate-${
+                    pago.idPago
+                  }" value="${pago.concepto}">
+                  </div>
+              </form>
+  
+                          </div>
+                          <div class="modal-footer" id='footer-${pago.idPago}'>
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                              <button type="button" class="btn btn-primary" onclick="guardarCambios('${
+                                pago.idPago
+                              }','${pago.idUsuario}')">Guardar cambios</button>
+                          </div>
+                      </div>
+                  </div>
+              </div>`
+              : ""
+          }
+      </td>
+  </tr>
+  `;
+          cuerpoTabla.innerHTML += fila;
+        });
+      })
+      .catch((error) => console.error("Error al buscar alumno:", error));
+  }
+  
+  function guardarCambios(idPago, idUsuario) {
+    // Convertir los valores a los tipos de datos correspondientes
+    idPago = parseInt(idPago); // Convertir a número entero
+    idUsuario = parseInt(idUsuario); // Convertir a número entero
+  
+    // Obtener el valor introducido por el usuario en el campo de monto
+    const montoInput = document.getElementById(`montoUpdate-${idPago}`);
+    const montoValor = parseInt(montoInput.value);
+  
+    // Obtener el valor introducido por el usuario en el campo de fecha de emisión
+    const fechaEmisionInput = document.getElementById(
+      `fechaEmisionUpdate-${idPago}`
+    );
+    const fechaEmisionValor = fechaEmisionInput.value;
+  
+    // Obtener el valor introducido por el usuario en el campo de fecha límite
+    const fechaLimiteInput = document.getElementById(
+      `fechaLimiteUpdate-${idPago}`
+    );
+    const fechaLimiteValor = fechaLimiteInput.value;
+  
+    // Obtener el valor introducido por el usuario en el campo de fecha de pago
+    const fechaPagoInput = document.getElementById(`fechaPagoUpdate-${idPago}`);
+    const fechaPagoValor = fechaPagoInput.value;
+  
+    // Obtener el valor introducido por el usuario en el campo de estado
+    const estadoInput = document.getElementById(`estadoUpdate-${idPago}`);
+    const estadoValor = estadoInput.value;
+  
+    // Obtener el valor introducido por el usuario en el campo de modalidad
+    const modalidadInput = document.getElementById(`modalidadUpdate-${idPago}`);
+    const modalidadValor = modalidadInput.value;
+  
+    // Obtener el valor introducido por el usuario en el campo de concepto
+    const conceptoInput = document.getElementById(`conceptoUpdate-${idPago}`);
+    const conceptoValor = conceptoInput.value;
+  
+    // Construir el objeto de datos con los cambios
+    const datosUsuarioa = {
+      idPagoValor: idPago,
+      idUsuarioValor: idUsuario,
+      montoValor: montoValor,
+      fechaEmisionValor: fechaEmisionValor,
+      fechaLimiteValor: fechaLimiteValor,
+      fechaPagoValor: fechaPagoValor,
+      estadoValor: estadoValor,
+      modalidadValor: modalidadValor,
+      conceptoValor: conceptoValor,
+    };
+  
+    console.log(datosUsuarioa);
+  
+    // Realizar la consulta AJAX
+    // Enviar la solicitud al servidor
+    // Realizar la consulta AJAX
+    fetch("/actualizarPago", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(datosUsuarioa),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Error en la respuesta del servidor");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data.message); // Mensaje de éxito del servidor
+        buscarAlumno(); // Recargar la lista de alumnos/pagos
+      })
+      .catch((error) => {
+        console.error("Error al actualizar el pago:", error);
+        // Mostrar algún mensaje de error al usuario aquí si es necesario
+      })
+      .finally(() => {
+        // Cerrar el modal y eliminar el fondo opaco
+        const modalElement = document.getElementById(`exampleModal-${idPago}`);
+        if (modalElement) {
+          const modalInstance = bootstrap.Modal.getInstance(modalElement);
+          if (modalInstance) {
+            modalInstance.hide();
+          }
+        }
+  
+        // Eliminar el fondo opaco (backdrop)
+        const backdrop = document.querySelector(".modal-backdrop");
+        if (backdrop) {
+          backdrop.remove();
+        }
+  
+        // Restablecer la interactividad de la página si es necesario
+        document.body.style.overflow = ""; // Restablecer el desplazamiento
+        document.body.classList.remove("modal-open");
+      });
+  }
