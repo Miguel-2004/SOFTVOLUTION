@@ -959,3 +959,111 @@ function registros() {
         // Mostrar algún mensaje de error al usuario aquí si es necesario
       });
   }
+
+  function RegistrarReferenciaPersonalizada() {
+    const referencia = document.getElementById("nroReferencia").value;
+  
+    console.log(
+      `RegistrarReferenciaPersonalizada   nroReferencia: ${nroReferencia}`
+    );
+    datos = {
+      referencia: referencia,
+      idUsuario: alumno.IdUsuario,
+    };
+  
+    // Realizar la petición AJAX
+    fetch("/RegistrarReferenciaPersonalizada", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(datos),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Error en la respuesta del servidor");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data.message); // Mensaje de éxito del servidor
+        // Aquí se muestra el alert si todo fue correcto
+        alert(data.message);
+        buscarAlumnoRegistro();
+      })
+      .catch((error) => {
+        console.error("Error al actualizar el pago:", error);
+        // Mostrar algún mensaje de error al usuario aquí si es necesario
+      });
+  }
+  
+function llenarComboBoxCicloEscolar() {
+    const comboBox = document.getElementById("seleccionarCicloEscolar");
+    comboBox.innerHTML = ""; // Limpiar opciones existentes
+  
+    fetch("/cicloescolar", {
+      method: "POST", // Asegúrate de que el método sea el correcto (POST en este caso)
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data); // Puedes ver los datos en la consola para asegurarte de que se reciben correctamente
+        data.forEach((ciclo) => {
+          const option = document.createElement("option");
+          option.value = ciclo.idCiclo; // Usar idCiclo como valor
+          option.textContent = ciclo.periodo; // Mostrar el periodo
+          // Si necesitas mantener ambos, periodo y idCiclo
+          option.setAttribute("data-periodo", ciclo.periodo);
+  
+          comboBox.appendChild(option);
+        });
+      })
+      .catch((error) => console.error("Error:", error));
+  }
+  
+  function setearCombobox() {
+    const idUsuario = alumno.IdUsuario; // Asegúrate de que este valor está correctamente definido
+    const comboBox = document.getElementById("seleccionarCicloEscolar"); // Asumiendo que este es el ID del combobox
+  
+    fetch(`/setearCombobox/${idUsuario}`, {
+      // Ajusta esta URL según la ruta de tu API
+      method: "GET", // Cambia a POST si es necesario
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        comboBox.value = ""; // Limpiar opciones existentes
+        console.log(data); // Ver los datos en la consola para debuggear
+        data.forEach((ciclo) => {
+          console.log(ciclo);
+  
+          fetch(`/buscarPeriodoConIdCiclo/${ciclo.idCiclo}`, {
+            // Ajusta esta URL según la ruta de tu API
+            method: "GET", // Cambia a POST si es necesario
+            headers: {
+              "Content-Type": "application/json",
+            },
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              const option = document.createElement("option");
+              option.value = ciclo.idCiclo; // Usar idCiclo como valor
+              option.textContent = data.periodo; // Mostrar el periodo
+              // Si necesitas mantener ambos, periodo y idCiclo
+              option.setAttribute("data-periodo", data.periodo);
+  
+              if (comboBox.options.length > 0) {
+                comboBox.insertBefore(option, comboBox.options[0]);
+              } else {
+                comboBox.appendChild(option);
+              }
+            });
+        });
+      })
+      .catch((error) => console.error("Error al cargar los ciclos:", error));
+  }
+  
