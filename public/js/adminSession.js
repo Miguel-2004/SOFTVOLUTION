@@ -293,3 +293,364 @@ function buscarAlumno() {
     })
     .catch((error) => console.error("Error al buscar alumno:", error));
 }
+
+function guardarCambios(idPago, idUsuario) {
+  // Convertir los valores a los tipos de datos correspondientes
+  idPago = parseInt(idPago); // Convertir a número entero
+  idUsuario = parseInt(idUsuario); // Convertir a número entero
+
+  // Obtener el valor introducido por el usuario en el campo de monto
+  const montoInput = document.getElementById(`montoUpdate-${idPago}`);
+  const montoValor = parseInt(montoInput.value);
+
+  // Obtener el valor introducido por el usuario en el campo de fecha de emisión
+  const fechaEmisionInput = document.getElementById(
+    `fechaEmisionUpdate-${idPago}`
+  );
+  const fechaEmisionValor = fechaEmisionInput.value;
+
+  // Obtener el valor introducido por el usuario en el campo de fecha límite
+  const fechaLimiteInput = document.getElementById(
+    `fechaLimiteUpdate-${idPago}`
+  );
+  const fechaLimiteValor = fechaLimiteInput.value;
+
+  // Obtener el valor introducido por el usuario en el campo de fecha de pago
+  const fechaPagoInput = document.getElementById(`fechaPagoUpdate-${idPago}`);
+  const fechaPagoValor = fechaPagoInput.value;
+
+  // Obtener el valor introducido por el usuario en el campo de estado
+  const estadoInput = document.getElementById(`estadoUpdate-${idPago}`);
+  const estadoValor = estadoInput.value;
+
+  // Obtener el valor introducido por el usuario en el campo de modalidad
+  const modalidadInput = document.getElementById(`modalidadUpdate-${idPago}`);
+  const modalidadValor = modalidadInput.value;
+
+  // Obtener el valor introducido por el usuario en el campo de concepto
+  const conceptoInput = document.getElementById(`conceptoUpdate-${idPago}`);
+  const conceptoValor = conceptoInput.value;
+
+  // Construir el objeto de datos con los cambios
+  const datosUsuarioa = {
+    idPagoValor: idPago,
+    idUsuarioValor: idUsuario,
+    montoValor: montoValor,
+    fechaEmisionValor: fechaEmisionValor,
+    fechaLimiteValor: fechaLimiteValor,
+    fechaPagoValor: fechaPagoValor,
+    estadoValor: estadoValor,
+    modalidadValor: modalidadValor,
+    conceptoValor: conceptoValor,
+  };
+
+  console.log(datosUsuarioa);
+
+  // Realizar la consulta AJAX
+  // Enviar la solicitud al servidor
+  // Realizar la consulta AJAX
+  fetch("/actualizarPago", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(datosUsuarioa),
+  })
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Error en la respuesta del servidor");
+      }
+      return response.json();
+    })
+    .then((data) => {
+      console.log(data.message); // Mensaje de éxito del servidor
+      buscarAlumno(); // Recargar la lista de alumnos/pagos
+    })
+    .catch((error) => {
+      console.error("Error al actualizar el pago:", error);
+      // Mostrar algún mensaje de error al usuario aquí si es necesario
+    })
+    .finally(() => {
+      // Cerrar el modal y eliminar el fondo opaco
+      const modalElement = document.getElementById(`exampleModal-${idPago}`);
+      if (modalElement) {
+        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+        if (modalInstance) {
+          modalInstance.hide();
+        }
+      }
+
+      // Eliminar el fondo opaco (backdrop)
+      const backdrop = document.querySelector(".modal-backdrop");
+      if (backdrop) {
+        backdrop.remove();
+      }
+
+      // Restablecer la interactividad de la página si es necesario
+      document.body.style.overflow = ""; // Restablecer el desplazamiento
+      document.body.classList.remove("modal-open");
+    });
+}
+
+function registros() {
+  document.getElementById("tituloNavbar").innerText = "Registros";
+
+  contenedor = document.getElementById("contenedor");
+  contenedor.innerHTML = "";
+
+  contenedor.innerHTML = `
+    <div id="buscarAlumnoRegistro" class="col-6" style="padding-top: 2%">
+  <div class="input-group mb-3">
+    <input id="inputNombreBuscarR" type="text" class="form-control" placeholder="Nombre Paterno Materno" aria-label="Recipient's username" aria-describedby="button-addon2">
+    <button class="btn btn-outline-secondary" type="button" id="button-addon2" onclick="buscarAlumnoRegistro()">Buscar</button>
+  </div>
+</div>
+
+
+<!-- Tabla de Pagos -->
+<table id="tablaPagos" class="table">
+  <thead>
+    <tr>
+      <th scope="col">ID Pagos</th>
+      <th scope="col">Monto</th>
+      <th scope="col">Fecha Emisión</th>
+      <th scope="col">Fecha Límite</th>
+      <th scope="col">Fecha Pago</th>
+      <th scope="col">Estado</th>
+      <th scope="col">Modalidad</th>
+      <th scope="col">Concepto</th>
+      <th scope="col">Seleccionar</th>
+      <th scope="col">Generar Ficha</th>
+    </tr>
+  </thead>
+  <tbody id="cuerpoTabla">
+    <!-- Aquí se cargarán los datos de los pagos -->
+  </tbody>
+</table>
+
+
+
+
+<div class="row">
+
+
+
+  <div class="col-md-6" id="formularioSolicitarCobro">
+    <div class="card">
+      <div class="card-body">
+
+        <!-- Título -->
+        <h5 class="card-title">Solicitud de cobro</h5>
+
+        <!-- Formulario -->
+        <form id="formulario1">
+
+          <!-- Fecha solicitud -->
+          <div class="mb-3">
+            <label for="fecha_solicitud">Fecha solicitud</label>
+            <input type="date" class="form-control" id="fechaEmision" placeholder="Seleccione la fecha">
+          </div>
+
+          <!-- Fecha límite -->
+          <div class="mb-3">
+            <label for="fecha_limite">Fecha límite</label>
+            <input type="date" class="form-control" id="fechaLimite" placeholder="Seleccione la fecha">
+          </div>
+
+          <!-- Monto -->
+          <div class="mb-3">
+            <label for="monto">Monto</label>
+            <input type="number" class="form-control" id="monto" placeholder="Ingrese el monto">
+          </div>
+
+          <!-- Concepto -->
+          <div class="mb-3">
+            <label for="concepto">Concepto</label>
+            <select class="form-control" id="concepto">
+              <option value="Colegiatura">Colegiatura</option>
+              <option value="Otros pagos">Otros pagos</option>
+            </select>
+          </div>
+
+          <!-- Botón de registro -->
+          <button type="submit" class="btn btn-primary" style="background-color: #9E3232;">Solicitar Cobro</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+
+  <div class=" col-md-6" id="registrarPagoEfectivoTransferencia">
+            <div class="card">
+              <div class="card-body">
+                <!-- Título -->
+                <h5 class="card-title" id="cardRegPagoEfTr">Registrar pago Efect./Transf. idPago:</h5>
+
+                <!-- Formulario -->
+                <form id="formulario2">
+
+                  <div class="mb-3" style="display: flex;">
+
+                    <div class="flex-large" style="flex: 30%;">
+                      <label for="modalidad">Modalidad</label>
+                      <select class="form-control" id="modalidadEfectTrans">
+                        <option value="Efectivo">Efectivo</option>
+                        <option value="transferencia">Transferencia</option>
+                      </select>
+                    </div>
+
+                    <div class="flex-small" style="flex: 70%; display: none;" id="uploadField">
+                      <label for="transferImage">Subir Archivo</label>
+                      <input type="file" class="form-control" id="transferImage" name="transferImage">
+                    </div>
+
+                  </div>
+
+
+                  <!-- Monto -->
+                  <div class="mb-3">
+                    <label for="monto">Monto</label>
+                    <input type="number" class="form-control" id="montoRegistrarPaEfTr" placeholder="Ingrese el monto">
+                  </div>
+
+                  <!-- Fecha de pago -->
+                  <div class="mb-3">
+                    <label for="fecha_pago">Fecha pago</label>
+                    <input type="date" class="form-control" id="fechaPagoRegistrarPaEfTr" placeholder="Seleccione la fecha">
+                  </div>
+
+                  <!-- Concepto -->
+                  <div class="mb-3">
+                    <label for="concepto">Concepto</label>
+                    <select class="form-control" id="conceptoRegistrarPaEfTr">
+                      <option value="Colegiatura">Colegiatura</option>
+                      <option value="Otros pagos">Otros pagos</option>
+                    </select>
+                  </div>
+
+                  <!-- Botón de registro -->
+                  <button type="submit" class="btn btn-success" style="background-color: #9E3232;">Registrar pago</button>
+                </form>
+              </div>
+            </div>
+      </div>
+
+    </div>
+
+  </div>
+
+
+
+
+  <div class="row" style="padding-top: 2%">
+
+    <div class="col-md-6" id="referenciaPersonalizada">
+
+      <div class="card">
+        <div class="card-body">
+          <!-- Título -->
+          <h5 class="card-title" id="titleReferenciaPersonalizada" >Registrar Ref matricula:</h5>
+
+          <!-- Formulario -->
+          <form id="formulario3">
+
+            <!-- Monto -->
+            <div class="mb-3">
+              <label for="nroReferencia">Numero de referencia</label>
+              <input type="number" class="form-control" id="nroReferencia" placeholder="Ingrese el n° referencia">
+            </div>
+
+
+            <!-- Botón de registro -->
+            <button type="submit" class="btn btn-success" style="background-color: #9E3232;" ">Registrar n° referencia</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class=" col-md-6" id="registrarCicloEscolar">
+              <div class="card">
+                <div class="card-body">
+                  <!-- Título -->
+                  <h5 class="card-title" id="cardRegPagoEfTr">Registrar Ciclo Escolar</h5>
+
+                  <!-- Formulario -->
+
+                  <form id="formulario4">
+
+                    <div class="mb-3" ">
+                      <label for="cicloEscolar">Ciclo actual</label>
+                      <select class="form-control" id="seleccionarCicloEscolar">
+                      </select>
+                      </div>
+
+                    <!-- Botón de registro -->
+                    <button type="submit" class="btn btn-dark" style="background-color: #9E3232;">Registrar Ciclo</button>
+                  </form>
+                </div>
+              </div>
+        </div>
+
+      </div>
+
+    </div>
+
+
+      `;
+
+  document.getElementById("inputNombreBuscarR").value = nombre;
+  buscarAlumnoRegistro();
+
+  llenarComboBoxCicloEscolar();
+
+  const formularioSolicitarCobro = document.getElementById(
+    "formularioSolicitarCobro"
+  );
+
+  formularioSolicitarCobro.addEventListener("submit", function (event) {
+    event.preventDefault(); // Esto previene el comportamiento por defecto del formulario
+    solicitarCobro(); // Llama a la función solicitarCobro cuando se haga submit al formulario
+  });
+
+  const registrarPagoEfectivoTransferencia = document.getElementById(
+    "registrarPagoEfectivoTransferencia"
+  );
+
+  registrarPagoEfectivoTransferencia.addEventListener(
+    "submit",
+    function (event) {
+      event.preventDefault(); // Esto previene el comportamiento por defecto del formulario
+      registrarPagoEfectivoTransferenciaFunc(); // Llama a la función registrarPagoEfectivoTransferencia cuando se haga submit al formulario
+    }
+  );
+
+  const seleccionarCicloEscolar = document.getElementById(
+    "seleccionarCicloEscolar"
+  );
+
+  registrarCicloEscolar.addEventListener("submit", function (event) {
+    event.preventDefault(); // Esto previene el comportamiento por defecto del formulario
+    registrarCicloEscolarFunction(); // Llama a la función registrarPagoEfectivoTransferencia cuando se haga submit al formulario
+  });
+
+  const referenciaPersonalizada = document.getElementById(
+    "referenciaPersonalizada"
+  );
+
+  referenciaPersonalizada.addEventListener("submit", function (event) {
+    event.preventDefault(); // Esto previene el comportamiento por defecto del formulario
+    RegistrarReferenciaPersonalizada(); // Llama a la función registrarPagoEfectivoTransferencia cuando se haga submit al formulario
+  });
+  // Añadir el controlador de eventos después de actualizar el DOM
+  document
+    .getElementById("modalidadEfectTrans")
+    .addEventListener("change", function () {
+      const uploadField = document.getElementById("uploadField");
+      if (this.value === "transferencia") {
+        uploadField.style.display = "block"; // Muestra el campo de archivo
+      } else {
+        uploadField.style.display = "none"; // Oculta el campo de archivo
+      }
+    });
+}
